@@ -79,6 +79,7 @@ void run_point_0_0(int *old_motor1_loc, int *old_motor2_loc, int *new_motor1_loc
         set_motor_dir(scmotor2.motor, BACK_MOTOR_2);
         mor2 = -mor2;
     }
+    ESP_LOGE(SCARA_TAG, "run motor %d | %d", mor1, mor2);
     run_motor(mor1, mor2);
     motor3_go_home();
 }
@@ -100,6 +101,7 @@ void run_point_0_1(int *old_motor1_loc, int *old_motor2_loc, int *new_motor1_loc
         set_motor_dir(scmotor2.motor, BACK_MOTOR_2);
         mor2 = -mor2;
     }
+    ESP_LOGE(SCARA_TAG, "run motor %d | %d", mor1, mor2);
     run_motor(mor1, mor2);
     motor3_go_home();
 }
@@ -121,6 +123,7 @@ void run_point_1(int *old_motor1_loc, int *old_motor2_loc, int *new_motor1_loc, 
         set_motor_dir(scmotor2.motor, BACK_MOTOR_2);
         mor2 = -mor2;
     }
+    ESP_LOGE(SCARA_TAG, "run motor %d | %d", mor1, mor2);
     run_motor(mor1, mor2);
     motor3_go_home();
 }

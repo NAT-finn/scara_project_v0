@@ -11,7 +11,7 @@
 uint32_t calculate_duty(float angle)
 {
     float angle_us = angle / MAX_SERVO_ANGLE * (MAX_WIDTH_US - MIN_WIDTH_US) + MIN_WIDTH_US;
-    ESP_LOGE(SERVO_TAG, "angle us: %f", angle_us);
+    //ESP_LOGE(SERVO_TAG, "angle us: %f", angle_us);
     uint32_t duty = (uint32_t)(FULL_DUTY * (angle_us) * SERVO_FREQ / (1000000.0f));
     return duty;
 }

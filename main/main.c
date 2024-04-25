@@ -40,7 +40,7 @@
 #define GPIO_HX711_SCLK          27
 #define AVG_SAMPLES              10
 
-#define DETECT_OBJECT_PIN        9
+#define DETECT_OBJECT_PIN        4
 
 #define LEVEL_WEIGHT_0           10000
 #define LEVEL_WEIGHT_1           20000
@@ -71,12 +71,15 @@ static void robot_run_function(uint8_t class){
     int old_motor1_loc = 0, old_motor2_loc = 0;
     int new_motor1_loc = 0, new_motor2_loc = 0;
     run_point_0_0(&old_motor1_loc, &old_motor2_loc, &new_motor1_loc, &new_motor2_loc);
+    ESP_LOGE(DEBUG_TAG, "update %d | %d", new_motor1_loc, new_motor2_loc);
     servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_OPEN);
     vTaskDelay(500);
     run_point_0_1(&old_motor1_loc, &old_motor2_loc, &new_motor1_loc, &new_motor2_loc);
+    ESP_LOGE(DEBUG_TAG, "update %d | %d", new_motor1_loc, new_motor2_loc);
     servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_CLOSE);
     vTaskDelay(500);
     run_point_1(&old_motor1_loc, &old_motor2_loc, &new_motor1_loc, &new_motor2_loc);
+    ESP_LOGE(DEBUG_TAG, "update %d | %d", new_motor1_loc, new_motor2_loc);
     func_point_motor3[class-1]();
     vTaskDelay(500);
     servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_OPEN);
@@ -127,16 +130,20 @@ void app_main(void)
     while(1) {
         if(gpio_get_level(DETECT_OBJECT_PIN) == 0){
             check_count++;
-            vTaskDelay(50);
+            //ESP_LOGE(DEBUG_TAG, "check count: %d", check_count);
             if(check_count > 10){ 
+                ESP_LOGE(DEBUG_TAG, "bug 2");
                 check_count= 0;
-                weight = HX711_get_units(AVG_SAMPLES);
+                weight = 100;
+                //weight = HX711_get_units(AVG_SAMPLES);
                 uint8_t class = classification(weight);
                 robot_run_function(class);
                 go_home();
+                ESP_LOGE(DEBUG_TAG, "end bug 2");
             }
         }else{
             check_count= 0;
         }
+        vTaskDelay(50);
     }
 }

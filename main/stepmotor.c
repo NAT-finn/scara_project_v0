@@ -7,7 +7,7 @@ void init_motor(step_motor_t *motor, uint8_t step_pin, uint8_t dir_pin, uint8_t 
     motor->step_pin = step_pin;
     motor->dir_pin = dir_pin;
     gpio_config_t GPIO_config_motor = {};
-    ESP_LOGE(MOTOR_TAG, "pin: %d", motor->dir_pin);
+    //ESP_LOGE(MOTOR_TAG, "pin: %d", motor->dir_pin);
     GPIO_config_motor.pin_bit_mask = ((uint64_t)1 << step_pin) | ((uint64_t)1 << dir_pin) ;
     GPIO_config_motor.mode = GPIO_MODE_OUTPUT;
     GPIO_config_motor.pull_up_en = 0;
