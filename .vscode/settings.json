@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "sdkconfig.h": "c",
+        "servo_by_ledc.h": "c",
+        "stdio.h": "c"
+    },
+    "idf.adapterTargetName": "esp32",
+    "idf.flashType": "UART",
+    "idf.portWin": "COM9"
+}
