@@ -36,14 +36,14 @@
 #define SERVO_2_ANG_OPEN         33
 #define SERVO_2_ANG_CLOSE        100
 
-#define GPIO_HX711_DATA          13
-#define GPIO_HX711_SCLK          27
+#define GPIO_HX711_DATA          19
+#define GPIO_HX711_SCLK          18
 #define AVG_SAMPLES              10
 
-#define DETECT_OBJECT_PIN        4
+#define DETECT_OBJECT_PIN        35
 
-#define LEVEL_WEIGHT_0           10000
-#define LEVEL_WEIGHT_1           20000
+#define LEVEL_WEIGHT_0           145000
+#define LEVEL_WEIGHT_1           135000
 
 unsigned long weight =0;
 
@@ -81,9 +81,10 @@ static void robot_run_function(uint8_t class){
     run_point_1(&old_motor1_loc, &old_motor2_loc, &new_motor1_loc, &new_motor2_loc);
     ESP_LOGE(DEBUG_TAG, "update %d | %d", new_motor1_loc, new_motor2_loc);
     func_point_motor3[class-1]();
-    vTaskDelay(500);
+    ESP_LOGE(DEBUG_TAG, "done");
+    vTaskDelay(100);
     servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_OPEN);
-    vTaskDelay(500);
+    vTaskDelay(100);
     servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_CLOSE);
 }
 
@@ -106,7 +107,7 @@ void app_main(void)
                 LEDC_CHANNEL_1,
             },
         },
-        .channel_num = 2,
+        .channel_num = 1,
     };
     servo_init(LEDC_LOW_SPEED_MODE, &servo_cfg);
 
@@ -121,8 +122,8 @@ void app_main(void)
     HX711_init(GPIO_HX711_DATA,GPIO_HX711_SCLK,eGAIN_128);
     HX711_tare();
 
-    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, SERVO_1_ANG_HOME);
-    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_CLOSE);
+    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, 0);
+    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, 0);
     go_home();
     ESP_LOGE(DEBUG_TAG, "bug");
 
@@ -134,8 +135,9 @@ void app_main(void)
             if(check_count > 10){ 
                 ESP_LOGE(DEBUG_TAG, "bug 2");
                 check_count= 0;
-                weight = 100;
-                //weight = HX711_get_units(AVG_SAMPLES);
+                //weight = 100;
+                weight = HX711_get_units(AVG_SAMPLES);
+                ESP_LOGE(DEBUG_TAG, "weight: %ld", weight);
                 uint8_t class = classification(weight);
                 robot_run_function(class);
                 go_home();

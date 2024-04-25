@@ -15,26 +15,26 @@
 #include "servo_by_ledc.h"
 #include "stepmotor.h"
 
-// #define L1         100
-// #define L2         120
-// #define PI         3.14159265358979323846
+#define L1         100
+#define L2         120
+#define PI         3.14159265358979323846
 
 #define BACK_MOTOR_1   0
 #define BACK_MOTOR_2   1
 #define BACK_MOTOR_3   0
 
-#define POINT_0_0_MOR1 2000
-#define POINT_0_0_MOR2 1000
+#define POINT_0_0_MOR1 1200
+#define POINT_0_0_MOR2 1100
 
 #define POINT_0_1_MOR1 500
-#define POINT_0_1_MOR2 1000
+#define POINT_0_1_MOR2 1100
 
 #define POINT_1_MOR1 2000
-#define POINT_1_MOR2 500
+#define POINT_1_MOR2 850
 
-#define POINT_1_1_MOR3 500
-#define POINT_1_2_MOR3 1000
-#define POINT_1_3_MOR3 2000
+#define POINT_1_1_MOR3 300
+#define POINT_1_2_MOR3 600
+#define POINT_1_3_MOR3 1200
 
 
 typedef struct {

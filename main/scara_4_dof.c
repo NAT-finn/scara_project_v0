@@ -24,8 +24,36 @@ void config_scara_motor(step_motor_t motor1, step_motor_t motor2, step_motor_t m
     // new_point.phi_1 = new_point.phi_2 = new_point.z = 0;
 }
 
+point_t run_locate(int x, int y, int z){
+    int phi_1_d, phi_2_d;
+    point_t point;
+    //ESP_LOGE(SCARA_TAG, "bug");
+    //double test = ((double)((x*x+y*y) - (L1*L1+L2*L2)))/(2*L1*L2);
+    double phi_temp = acos(((double)((x*x+y*y) - (L1*L1+L2*L2)))/(2*L1*L2));
+    //ESP_LOGE(SCARA_TAG, "phi_temp: %f", phi_temp);
+    phi_2_d = (int)((phi_temp*1800000)/PI); 
+    
+    double min_value = 1000000;
+    for(int i = -900000; i <= 900000; i +=  scmotor2.motor.full_step){
+        //ESP_LOGE(SCARA_TAG, "bug1: %d", i);
+        double ix = (((double)i)/1800000)*PI;
+        double delta_1 = L1*cos(ix) + L2*cos(phi_temp + ix) - x;
+        double delta_2 = L1*sin(ix) + L2*sin(phi_temp + ix) - y;
+        if(fabs(delta_1) + fabs(delta_2) < min_value){
+            min_value = fabs(delta_1) + fabs(delta_2);
+            phi_1_d = i;
+        }
+    }
+    ESP_LOGE(SCARA_TAG, "phi_1: %d | phi_2: %d | z: %d", phi_1_d, phi_2_d, z);
+    point.phi_1 = phi_1_d;
+    point.phi_2 = phi_2_d;
+    point.z = z;
+
+    return point;
+}
+
 void go_home(){
-    while (scmotor1.end_stop_pin == 1)
+    while (gpio_get_level(scmotor1.end_stop_pin) == 1)
     {
         set_motor_dir(scmotor1.motor, BACK_MOTOR_1);
         set_motor_high(scmotor1.motor);
@@ -33,7 +61,7 @@ void go_home(){
         set_motor_low(scmotor1.motor);
         vTaskDelay(1);
     }
-    while (scmotor2.end_stop_pin == 1)
+    while (gpio_get_level(scmotor2.end_stop_pin) == 1)
     {
         set_motor_dir(scmotor2.motor, BACK_MOTOR_2);
         set_motor_high(scmotor2.motor);
@@ -41,7 +69,7 @@ void go_home(){
         set_motor_low(scmotor2.motor);
         vTaskDelay(1);
     }
-    while (scmotor3.end_stop_pin == 1)
+    while (gpio_get_level(scmotor3.end_stop_pin) == 1)
     {
         set_motor_dir(scmotor3.motor, BACK_MOTOR_3);
         set_motor_high(scmotor3.motor);
@@ -52,7 +80,7 @@ void go_home(){
 }
 
 void motor3_go_home(){
-        while (scmotor3.end_stop_pin == 1)
+        while (gpio_get_level(scmotor3.end_stop_pin) == 1)
     {
         set_motor_dir(scmotor3.motor, BACK_MOTOR_3);
         set_motor_high(scmotor3.motor);
@@ -95,6 +123,7 @@ void run_point_0_1(int *old_motor1_loc, int *old_motor2_loc, int *new_motor1_loc
     set_motor_dir(scmotor2.motor, !BACK_MOTOR_2);
     if(mor1 < 0){
         set_motor_dir(scmotor1.motor, BACK_MOTOR_1);
+        ESP_LOGE(SCARA_TAG, "switch");
         mor1 = -mor1;
     }
     if(mor2 < 0){
@@ -159,7 +188,7 @@ void run_point_1_3(){
 }
 
 void run_motor(int mor1, int mor2){
-    while(mor1 != 00 && mor2 != 0){
+    while(mor1 != 00 || mor2 != 0){
         if(mor1 !=0) { set_motor_high(scmotor1.motor); }
         if(mor2 !=0) { set_motor_high(scmotor2.motor); }
         vTaskDelay(1);

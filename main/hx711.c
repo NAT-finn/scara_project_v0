@@ -124,6 +124,8 @@ unsigned long HX711_get_value(char times)
 	unsigned long avg = HX711_read_average(times);
 	if(avg > OFFSET)
 		return avg - OFFSET;
+	if(avg < OFFSET)
+		return OFFSET - avg;
 	else
 		return 0;
 }
