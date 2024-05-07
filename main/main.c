@@ -29,12 +29,12 @@
 #define END_STOP_2          39
 #define END_STOP_3          34
 
-#define SERVO_1_PIN         32
-#define SERVO_2_PIN         33
+#define SERVO_1_PIN         33
+#define SERVO_2_PIN         32
 
-#define SERVO_1_ANG_HOME         32
-#define SERVO_2_ANG_OPEN         33
-#define SERVO_2_ANG_CLOSE        100
+#define SERVO_1_ANG_HOME         90
+#define SERVO_2_ANG_OPEN         0
+#define SERVO_2_ANG_CLOSE        43
 
 #define GPIO_HX711_DATA          19
 #define GPIO_HX711_SCLK          18
@@ -58,12 +58,12 @@ const functionPointers func_point_motor3[] = {
 };
 
 static uint8_t classification(unsigned long w){
-    if(w > LEVEL_WEIGHT_1){
-        return 3;
-    }else if(w >= LEVEL_WEIGHT_0 && w <= LEVEL_WEIGHT_0){
+    if(w < LEVEL_WEIGHT_1){
+        return 1;
+    }else if(w >= LEVEL_WEIGHT_1 && w <= LEVEL_WEIGHT_0){
         return 2;
     }else{
-        return 1;
+        return 3;
     }
 }
 
@@ -72,8 +72,8 @@ static void robot_run_function(uint8_t class){
     int new_motor1_loc = 0, new_motor2_loc = 0;
     run_point_0_0(&old_motor1_loc, &old_motor2_loc, &new_motor1_loc, &new_motor2_loc);
     ESP_LOGE(DEBUG_TAG, "update %d | %d", new_motor1_loc, new_motor2_loc);
-    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_OPEN);
-    vTaskDelay(500);
+    //servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_OPEN);
+    vTaskDelay(100);
     run_point_0_1(&old_motor1_loc, &old_motor2_loc, &new_motor1_loc, &new_motor2_loc);
     ESP_LOGE(DEBUG_TAG, "update %d | %d", new_motor1_loc, new_motor2_loc);
     servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_CLOSE);
@@ -84,8 +84,8 @@ static void robot_run_function(uint8_t class){
     ESP_LOGE(DEBUG_TAG, "done");
     vTaskDelay(100);
     servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_OPEN);
-    vTaskDelay(100);
-    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_CLOSE);
+    //vTaskDelay(100);
+    //servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_CLOSE);
 }
 
 void app_main(void)
@@ -122,8 +122,8 @@ void app_main(void)
     HX711_init(GPIO_HX711_DATA,GPIO_HX711_SCLK,eGAIN_128);
     HX711_tare();
 
-    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, 0);
-    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, 0);
+    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, SERVO_1_ANG_HOME);
+    servo_write(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, SERVO_2_ANG_OPEN);
     go_home();
     ESP_LOGE(DEBUG_TAG, "bug");
 
@@ -139,6 +139,7 @@ void app_main(void)
                 weight = HX711_get_units(AVG_SAMPLES);
                 ESP_LOGE(DEBUG_TAG, "weight: %ld", weight);
                 uint8_t class = classification(weight);
+                ESP_LOGE(DEBUG_TAG, "check : %d", class);
                 robot_run_function(class);
                 go_home();
                 ESP_LOGE(DEBUG_TAG, "end bug 2");

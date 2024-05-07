@@ -53,14 +53,6 @@ point_t run_locate(int x, int y, int z){
 }
 
 void go_home(){
-    while (gpio_get_level(scmotor1.end_stop_pin) == 1)
-    {
-        set_motor_dir(scmotor1.motor, BACK_MOTOR_1);
-        set_motor_high(scmotor1.motor);
-        vTaskDelay(1);
-        set_motor_low(scmotor1.motor);
-        vTaskDelay(1);
-    }
     while (gpio_get_level(scmotor2.end_stop_pin) == 1)
     {
         set_motor_dir(scmotor2.motor, BACK_MOTOR_2);
@@ -77,6 +69,14 @@ void go_home(){
         set_motor_low(scmotor3.motor);
         vTaskDelay(1);
     }   
+    while (gpio_get_level(scmotor1.end_stop_pin) == 1)
+    {
+        set_motor_dir(scmotor1.motor, BACK_MOTOR_1);
+        set_motor_high(scmotor1.motor);
+        vTaskDelay(1);
+        set_motor_low(scmotor1.motor);
+        vTaskDelay(1);
+    }
 }
 
 void motor3_go_home(){
@@ -165,6 +165,7 @@ void run_point_1_1(){
         set_motor_low(scmotor3.motor); 
         vTaskDelay(1);
     }
+    ESP_LOGE(SCARA_TAG, "pick motor 3 %d", POINT_1_1_MOR3);
 }
 
 void run_point_1_2(){
@@ -175,6 +176,7 @@ void run_point_1_2(){
         set_motor_low(scmotor3.motor); 
         vTaskDelay(1);
     }
+    ESP_LOGE(SCARA_TAG, "pick motor 3 %d", POINT_1_2_MOR3);
 }
 
 void run_point_1_3(){
@@ -185,6 +187,7 @@ void run_point_1_3(){
         set_motor_low(scmotor3.motor); 
         vTaskDelay(1);
     }
+    ESP_LOGE(SCARA_TAG, "pick motor 3 %d", POINT_1_3_MOR3);
 }
 
 void run_motor(int mor1, int mor2){

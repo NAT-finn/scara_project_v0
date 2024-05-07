@@ -23,18 +23,18 @@
 #define BACK_MOTOR_2   1
 #define BACK_MOTOR_3   0
 
-#define POINT_0_0_MOR1 1200
+#define POINT_0_0_MOR1 1350
 #define POINT_0_0_MOR2 1100
 
 #define POINT_0_1_MOR1 500
 #define POINT_0_1_MOR2 1100
 
-#define POINT_1_MOR1 2000
+#define POINT_1_MOR1 1200
 #define POINT_1_MOR2 850
 
 #define POINT_1_1_MOR3 300
-#define POINT_1_2_MOR3 600
-#define POINT_1_3_MOR3 1200
+#define POINT_1_2_MOR3 900
+#define POINT_1_3_MOR3 1500
 
 
 typedef struct {
